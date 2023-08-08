@@ -24,7 +24,7 @@ This tool provides a visual representation of relationships among different enti
 1. **Clone the Repository**:
 
     ```bash
-    git clone https://github.com/PedroNVSRamos/RelationshipsVisualizationRug
+    git clone https://github.com/PedroNVSRamos/relationships-visualization-rug
     ```
 
 2. **Navigate to the Project Directory**:

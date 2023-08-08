@@ -1,0 +1,26 @@
+SubjectType,Relationship,ObjectType,RelationType
+Human,talks to,Human,active
+Human,talks to,Pet,active
+Human,talks to,Animal,active
+Human,listens to,Human,passive
+Pet,listens to,Human,passive
+Human,washes,Self,active
+Human,washes,Pet,active
+Human,washes,Animal,active
+Pet,is washed by,Human,passive
+Amnimal,is washed by,Human,passive
+Human,rides,Animal,active
+Human,pets,Animal,active
+Human,pets,Pet,active
+Human,plays with,Toy,active
+Pet,plays with,Toy,active
+Toy,is played by,Human,passive
+Toy,is played by,Pet,passive
+Human,eats,Food,active
+Pet,eats,Food,active
+Animal,eats,Fodd,active
+Food,is eaten by,Human,passive
+Food,is eaten by,Pet,passive
+Food,is eaten by,Animal,passive
+Human,drives,Vehicle,active
+Vehicle,is driven by,Human,passive
