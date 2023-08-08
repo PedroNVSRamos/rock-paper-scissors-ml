@@ -45,7 +45,7 @@ This tool provides a visual representation of relationships among different enti
 
 1. Map the participants and the relationships, using the respective files:
  - `participants.csv` maps all participants by their unique ID and their type (e.g., "Tom" is type "Human" and "Puzzle" is type "Toy");
- - `realtionships.csv` maps the relationships between the subject type, object type and type of relationshipt (e.g., the relationship "play with" is an "active" type relationship betweetn the subject "Human" and the object "Toy").
+ - `relationships.csv` maps the relationships between the subject type, object type and type of relationshipt (e.g., the relationship "play with" is an "active" type relationship betweetn the subject "Human" and the object "Toy").
 
 2. **Run the Application**:
 
