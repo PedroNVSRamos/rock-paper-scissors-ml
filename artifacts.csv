@@ -1,0 +1,38 @@
+ArtifactId,ArtifactTiers,TargetUser,TargetType,TargetId,EffectSize,EffectDescription
+
+Empire Crown,{1|2|3},Allies,Origin,Empire,{15|20|25},"Empire Champions gain {0} Defense when next to other Empire Champions."
+Plate Armor,{1|2|3},Allies,Class,Knight,{10|15|25},"Generates a {0}% Maximum Health bonus for every ally Knight deployed in the arena."
+Vitality Reaper,{1|2|3},Opponents,Class,Sorcerer,{10|15|20},"Enemy Sorcerers' max. Health decreases by {0}%."
+
+Desert Amulet,{1|2|3},Allies,Origin,Desert,{20|25|30},"Desert Champions generate additional {0}% of their Maximum mana per second."
+Sword of Rage,{1|2|3},Allies,Class,Blademaster,{2|4|8},"After 4 hits in a row, all Blademasters' Attack Rate is increased for {0}s."
+Predatorial Restraint,{1|2|3},Opponents,Class,Beastmaster,{30|35|40},"Enemy Beastmasters move {0}% slower."
+
+Bone Charm,{1|2|3},Allies,Origin,Undead,{2|3|4},"Undead Champions stay alive for an additional {0}s upon death."
+Arcane Aura,{1|2|3},Allies,Class,Sorcerer,{50|100|150},"Sorcerers and surrounding allies gain {0}% Mana regeneration."
+Tempo Curb,{1|2|3},Opponents,Class,Blademaster,{10|15|20},"Enemy Blademasters Attack Rate is {0}% slower."
+
+Herbal Rune,{1|2|3},Allies,Origin,Forest,{5|7|10},"Forest Champions heal by {0}% per second when next to other Forest Champions."
+Long Bow,{1|2|3},Allies,Class,Ranger,{4|3|2},"Sets target on fire for 3s with every {0} arrows and deals 15% Maximum Health Damage per second."
+Armor Shatterer,{1|2|3},Opponents,Class,Knight,{30|40|50},"Enemy Knights lose {0}% Defense."
+
+Golden Bracelet,{1|2|3},Allies,Origin,Light,{2|2.5|3},"When a Light Champion dies, surrounding allies become immune for {0}s."
+Spirit Staff,{1|2|3},Allies,Class,Priest,{5|8|10},"With every non-Priest ally death, Priests' healing abilities are increased by {0}%."
+Deadeye Dampener,{1|2|3},Opponents,Class,Ranger,{15|20|25},"Enemy Rangers' accuracy is decreases by {0}%."
+
+Spiked Chain,{1|2|3},Allies,Origin,Demon,{20|25|30},"With every non-Demon ally death, the Attack Rate of Demons is increased by {0}%."
+Shadow Blade,{1|2|3},Allies,Class,Assassin,{50|150|200},"All Assassins' Damage is increased by {0}% when attacking from behind or the side."
+Frail Conjurations,{1|2|3},Opponents,Class,Summoner,{50|40|30},"Enemy summoned units spawn with only {0}% of their Max Health."
+
+Moonstones,{1|2|3},Allies,Origin,Ice,{50|65|70},"Ice Champions gain a {0}% chance of stunning enemies for 1s with every hit."
+Armored Gauntlets,{1|2|3},Allies,Class,Shapeshifter,{30|45|60},"Shapeshifted Champions' Critical Hit chance increased by {0}%."
+
+Black Cape,{1|2|3},Allies,Origin,Shadow,{4|3|2},"Shadow Champions dodge attack number {0}(excluding abilities)."
+Summoner's Tome,{1|2|3},Allies,Class,Summoner,{10|25|50},"Summoners' Defense is increased by {0} while their summoned minion is alive."
+Miracle Muzzler,{1|2|3},Opponents,Class,Priest,{20|25|30},"Enemy Priests healing abilities are decreased by {0}%."
+
+Bestial Trinket,{1|2|3},Allies,Class,Beastmaster,{40|50|60},"Beastmasters have a {0}% chance of blocking enemy attacks from the front or side."
+Damage Throttle,{1|2|3},Opponents,Class,Assassin,{20|30|40},"Enemy Assassins deal {0}% less Attack Damage."
+Blood Sacrifice,{1|2|3},Allies,Origin,Orc,{15|30|50},"All Orc Champions lose 35% Health, but gain {0}% Critical Hit chance."
+Mana Leacher,{1|2|3},Opponents,Class,Shapeshifter,{25|40|60},"Enemy Shapeshifters' mana regeneration decreases by {0}%."
+#Artillery Tether,{1|2|3},Opponents,Class,Bombardier,{2|3|4},"Enemy Bombardiers max range is reduced by {0} cells."

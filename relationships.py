@@ -1,184 +1,241 @@
-import matplotlib
-matplotlib.use('Agg')
-import math
-import dash
-import dash_bootstrap_components as dbc
-from dash import dcc, html
-from dash.dependencies import Input, Output
 import pandas as pd
 import networkx as nx
-import matplotlib.pyplot as plt
-import io
-import base64
+from dash import Dash, dcc, html, Input, Output
+import plotly.graph_objects as go
 
-# Entity Class
-class Entity:
-    def __init__(self, name, type):
-        self.name = name
-        self.type = type
-        self.relations = {}
+def modify_description(row):
+    equipped_tier = int(row['EquippedTiers'])
+    effect_sizes = row['EffectSize']
+    effects = effect_sizes[:equipped_tier]
+    num_placeholders = row['EffectDescription'].count('{}')
+    if num_placeholders >= len(effects):
+        return row['EffectDescription'].format(*effects)
+    else:
+        # If there's a mismatch, use only the first value from effects.
+        return row['EffectDescription'].format(effects[0])
 
-    def add_relation(self, relation, target):
-        if relation not in self.relations:
-            self.relations[relation] = []
-        if target not in self.relations[relation]:
-            self.relations[relation].append(target)
+# Load dataframes at the top level
+artifacts_df = pd.read_csv("artifacts.csv").dropna(how='all')
+heroes_df = pd.read_csv("heroes.csv").dropna(how='all')
 
-# Load CSVs
-relationships = pd.read_csv('relationships.csv')
-participants = pd.read_csv('participants.csv')
+def process_data():
+    global artifacts_df, heroes_df
 
-# Initialize entities from participants.csv
-entities = {row['Name']: Entity(row['Name'], row['Type']) for _, row in participants.iterrows()}
+    def parse_field(s):
+        if not isinstance(s, str):
+            return s
+        parts = s.strip('{}').split('|')
+        return [float(p) if '.' in p else int(p) for p in parts]
 
-# Populate relationships from relationships.csv
-for _, row in relationships.iterrows():
-    subject_type, relationship, object_type = row['SubjectType'], row['Relationship'], row['ObjectType']
-    for entity_name, entity in entities.items():
-        if entity.type == subject_type:
-            for target_name, target in entities.items():
-                if target.type == object_type:
-                    entity.add_relation(relationship, target_name)
+    # Parse the EffectSize column before merging.
+    artifacts_df['EffectSize'] = artifacts_df['EffectSize'].apply(parse_field)
+    
+    # Merge the dataframes
+    merged_df = pd.merge(heroes_df, artifacts_df, on='ArtifactId', how='inner')
+    merged_df['EffectDescription'] = merged_df.apply(modify_description, axis=1)
 
-# Dash App
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+    return merged_df
 
-participants_options = [{'label': entity.name, 'value': entity.name} for entity in entities.values()]
-relationship_options = list(set([rel for entity in entities.values() for rel in entity.relations]))
-relation_types = relationships['RelationType'].unique()
+app = Dash(__name__)
 
-app.layout = dbc.Container([
-    html.H1("Relationship Viewer"),
-    dbc.Row([
-        dbc.Col([
-            html.Label("Select Participants:"),
-            dcc.Dropdown(id='participants-dropdown', options=participants_options, multi=True, value=list(entities.keys())),
-        ], width=4),
-        dbc.Col([
-            html.Label("Select type of relation:"),
-            dcc.Dropdown(id='relation-type-dropdown', options=[{'label': rel_type, 'value': rel_type} for rel_type in relation_types], multi=True),
-        ], width=4),
-        dbc.Col([
-            html.Label("Select Relationships:"),
-            dcc.Dropdown(id='relationships-dropdown', multi=True, value=relationship_options),
-        ], width=4),
+app.layout = html.Div([
+    html.H1("Heroes and Artifacts Relationship"),
+    
+    html.Div([
+        html.Label("Heroes selected:"),
+        dcc.Checklist(
+            id='hero-selection-checklist',
+            options=[{'label': hero, 'value': hero} for hero in heroes_df['HeroId'].unique()],
+            value=heroes_df['HeroId'].unique(),
+            inline=True
+        )
     ]),
-    dbc.Row([
-        dbc.Col([
-            dbc.Button("Run", id="run-btn", color="primary", className="mt-2")
-        ], width=2)
-    ]),
-    dbc.Row([
-        dbc.Col([
-            html.Img(id='network-graph', className="mt-4")
-        ])
-    ]),
-], fluid=True)
+    
+    html.Div([
+        html.Label("Hero level:"),
+        dcc.RangeSlider(
+            id='hero-level-slider',
+            min=1,
+            max=15,
+            value=[15],
+            marks={5: '5', 10: '10', 15: '15'},
+            step=1
+        )
+    ], style={"width": "50%"}),
 
-def generate_layout(G):
-    pos = nx.spring_layout(G)
-    for node, data in G.nodes(data=True):
-        if data['type'] == 'Human':
-            r = 2
-            angle = hash(node) % 360
-            pos[node] = (r * math.cos(math.radians(angle)), r * math.sin(math.radians(angle)))
-    return pos
+    html.Div([
+        html.Label("Layout selection:"),
+        dcc.Dropdown(
+            id='layout-selector',
+            options=[
+                {'label': 'Kamada-Kawai', 'value': 'kamada_kawai'},
+                {'label': 'Circular', 'value': 'circular'},
+                {'label': 'Shell', 'value': 'shell'},
+                {'label': 'Spring (Fruchterman-Reingold)', 'value': 'spring'},
+                {'label': 'Spectral', 'value': 'spectral'}
+            ],
+            value='kamada_kawai',
+            style={"width": "50%"}
+        ),
+    ]),
+
+    html.Button("Render Graph", id="render-button"),
+    dcc.Graph(id="network-graph", style={"height": "80vh"})
+])
 
 @app.callback(
-    Output('relationships-dropdown', 'options'),
-    Output('relationships-dropdown', 'value'),
-    Input('relation-type-dropdown', 'value')
+    Output("network-graph", "figure"),
+    [Input("render-button", "n_clicks"), Input('layout-selector', 'value'), Input('hero-level-slider', 'value'), Input('hero-selection-checklist', 'value')]
 )
-def filter_relationships_by_type(selected_relation_type):
-    if not selected_relation_type:
-        options = [{'label': rel, 'value': rel} for rel in relationship_options]
-        return options, []
-    filtered_relationships = relationships[relationships['RelationType'].isin(selected_relation_type)]
-    available_relations = filtered_relationships['Relationship'].unique()
-    options = [{'label': rel, 'value': rel} for rel in available_relations]
-    return options, list(available_relations)
-
-@app.callback(
-    Output('network-graph', 'src'),
-    Input('run-btn', 'n_clicks'),
-    Input('participants-dropdown', 'value'),
-    Input('relationships-dropdown', 'value')
-)
-def update_output(n_clicks, selected_participants, selected_relationships):
-    if n_clicks is None:
-        return dash.no_update
-
-    G = nx.DiGraph()
-    color_map = {
-        "Human": "red",
-        "Food": "yellow",
-        "Animal": "blue",
-        "Pet": "orange",
-        "Toy": "green",
-        "Vehicle": "purple"
-    }
-
-    for entity_name in selected_participants:
-        entity = entities[entity_name]
-        G.add_node(entity.name, type=entity.type)
-
-    for entity_name in selected_participants:
-        entity = entities[entity_name]
-        for relation, targets in entity.relations.items():
-            if relation not in selected_relationships:
-                continue
-            for target in targets:
-                if target in selected_participants:
-                    G.add_edge(entity.name, target, relation=relation)
-
-    pos = nx.shell_layout(G)  # or any other layout you prefer
-    node_colors = [color_map.get(data['type'], "gray") for node, data in G.nodes(data=True)]
-    labels = nx.get_edge_attributes(G, 'relation')
+def update_graph(n, layout_type, selected_level, selected_heroes):
+    merged_df = process_data()
     
-    non_self_edges = [(u, v) for u, v in G.edges() if u != v]
-
-    # 1. Adjust label position for curved edges.
-    # This creates an offset for edge labels. The values can be fine-tuned for best visual result.
-    label_pos = {}
-    for u, v, data in G.edges(data=True):
-        if u != v:  # Only for non-self-edges
-            x0, y0 = pos[u]
-            x1, y1 = pos[v]
-            label_pos[(u, v)] = ((x0 + x1) / 2 + (y1 - y0) * 0.2, (y0 + y1) / 2 + (x0 - x1) * 0.2)
-
-    # 2. Color the labels based on the target node (object) of the edge.
-    label_colors = {(u, v): color_map[G.nodes[v]['type']] for u, v in non_self_edges}
-
-    edge_colors = [color_map[G.nodes[v]['type']] for u, v in G.edges() if u != v]
-
-    plt.figure(figsize=(10, 6))
+    # Assuming 'HeroLevel' is the name of the column which specifies the hero level
+    merged_df = merged_df[merged_df['UnlockLevel'] <= selected_level[0]]
     
-    # Draw the nodes and non-self-edges with the specified edge colors and curved arrows
-    nx.draw(G, pos, with_labels=True, node_size=2000, node_color=node_colors, font_size=10, width=2, alpha=0.6, edge_color=edge_colors, arrowsize=20, edgelist=non_self_edges, connectionstyle="arc3,rad=0.2")
+    # Filtering based on selected heroes
+    merged_df = merged_df[merged_df['HeroId'].isin(selected_heroes)]
 
-    # Filter edge labels
-    filtered_labels = {(u, v): d for (u, v), d in labels.items() if u != v and u in pos and v in pos}
+    G = nx.Graph()
+
+    for index, row in merged_df.iterrows():
+        hero = row['HeroId']
+        target = row['TargetId']
+
+        # Add nodes with types
+        G.add_node(hero, type="hero")
+        G.add_node(target, type=row['TargetType'].lower())
+
+        # Determine edge color
+        color = 'green' if row['TargetUser'] == 'Allies' else 'red'
+
+        # Add edges from TargetId to HeroId
+        G.add_edge(target, hero, ArtifactId=row['ArtifactId'], color=color, weight=int(row['EquippedTiers']))
+
+    # Generate shell layout positions
+    class_targets = [node for node, data in G.nodes(data=True) if data['type'] == 'class']
+    other_targets = [node for node, data in G.nodes(data=True) if data['type'] != 'class' and data['type'] != 'hero']
+    heroes = [node for node, data in G.nodes(data=True) if data['type'] == 'hero']
     
-    # Filter the label_colors to match the filtered_labels
-    filtered_label_colors = [label_colors[edge] for edge in filtered_labels.keys()]
+    shells = [class_targets, other_targets, heroes]
+    
+    if layout_type == "kamada_kawai":
+        pos = nx.kamada_kawai_layout(G)
+    elif layout_type == "circular":
+        pos = nx.circular_layout(G)
+    elif layout_type == "shell":
+        classes = [node for node, data in G.nodes(data=True) if data['type'] == 'class']
+        heroes = [node for node, data in G.nodes(data=True) if data['type'] == 'hero']
+        pos = nx.shell_layout(G, nlist=[classes, heroes])
+    elif layout_type == "spring":
+        pos = nx.spring_layout(G, k=0.3)
+    elif layout_type == "spectral":
+        pos = nx.spectral_layout(G)
+    else:
+        pos = nx.kamada_kawai_layout(G)
 
-    for edge, color in zip(filtered_labels.keys(), filtered_label_colors):
-        label = filtered_labels[edge]
-        x, y = pos[edge[0]]
-        x2, y2 = pos[edge[1]]
-        x_avg, y_avg = (x + x2) / 2, (y + y2) / 2  # Midpoint of the edge
+    # Node traces with hover text
+    node_x, node_y = zip(*pos.values())
 
-        plt.text(x_avg, y_avg, label, color=color)
+    node_hover_texts = []
+    for node in G.nodes():
+        if G.nodes[node]['type'] == 'artifact':
+            description = merged_df[merged_df['ArtifactId'] == node]['EffectDescription'].iloc[0]
+            node_hover_texts.append(description)
+        else:
+            node_hover_texts.append(node)
 
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png")
-    buf.seek(0)
-    base64_image = base64.b64encode(buf.getvalue()).decode('utf-8')
+    node_trace = go.Scatter(
+        x=node_x, y=node_y,
+        mode='markers',
+        hoverinfo='text',
+        marker=dict(
+            showscale=False,
+            color=list(dict(G.degree).values()),
+            size=50,    # Increase to a value that surely covers the images
+            opacity=0.2, # Temporarily set opacity for visualization
+            line=dict(width=0.5)
+        ),
+        text=[f"{node}" if G.nodes[node]['type'] != 'artifact' else merged_df[merged_df['ArtifactId']==node]['EffectDescription'].iloc[0] for node in G.nodes()]
+    )
 
-    return "data:image/png;base64,{}".format(base64_image)
+    # Edge traces with hover text
+    edge_traces = [
+        go.Scatter(
+            x=[pos[edge[0]][0], pos[edge[1]][0]],
+            y=[pos[edge[0]][1], pos[edge[1]][1]],
+            line=dict(width=1, color=G[edge[0]][edge[1]]["color"]),
+            hoverinfo='text',
+            hovertext=merged_df[merged_df['ArtifactId']==G[edge[0]][edge[1]]['ArtifactId']]['EffectDescription'].iloc[0],
+            mode='lines'
+        ) for edge in G.edges()
+    ]
 
-if __name__ == "__main__":
-    app.run_server(debug=True, port=8050)
+    # Images for nodes and edges
+    node_images = [{
+        'source': f"assets/{node}.png",
+        'xref': "x",
+        'yref': "y",
+        'x': x,
+        'y': y,
+        'sizex': 0.1,
+        'sizey': 0.1,
+        'xanchor': "center",
+        'yanchor': "middle"
+    } for node, x, y in zip(G.nodes(), node_x, node_y)]
 
-if __name__ == "__main__":
+    edge_images = [{
+        'source': f"assets/{G[edge[0]][edge[1]].get('ArtifactId', 'default')}.png",
+        'xref': "x",
+        'yref': "y",
+        'x': (pos[edge[0]][0] + pos[edge[1]][0]) / 2,
+        'y': (pos[edge[0]][1] + pos[edge[1]][1]) / 2,
+        'sizex': 0.1,
+        'sizey': 0.1,
+        'xanchor': "center",
+        'yanchor': "middle"
+    } for edge in G.edges()]
+
+    # Calculate the midpoints of the edges
+    midpoints_x = [(pos[edge[0]][0] + pos[edge[1]][0]) / 2 for edge in G.edges()]
+    midpoints_y = [(pos[edge[0]][1] + pos[edge[1]][1]) / 2 for edge in G.edges()]
+
+    # Extract hover text for the artifact nodes
+    artifact_texts = [
+        f"<b>{G[edge[0]][edge[1]]['ArtifactId']}</b><br>{merged_df[merged_df['ArtifactId'] == G[edge[0]][edge[1]]['ArtifactId']]['EffectDescription'].iloc[0]}"
+        for edge in G.edges()
+    ]
+
+    # Scatter trace for the artifact nodes
+    artifact_trace = go.Scatter(
+        x=midpoints_x,
+        y=midpoints_y,
+        mode='markers',
+        hoverinfo='text',
+        marker=dict(
+            showscale=False,
+            color='rgba(0,0,0,0)',  # making the markers invisible
+            size=30,  # large enough to capture hover
+            line=dict(width=0.5)
+        ),
+        text=artifact_texts
+    )
+
+    # Create a figure and return
+    fig = go.Figure(
+        data=edge_traces + [node_trace, artifact_trace],
+        layout=go.Layout(
+            height=800,
+            showlegend=False,
+            hovermode='closest',
+            margin=dict(b=0, l=0, r=0, t=0),
+            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+            images=node_images + edge_images
+        )
+    )
+
+    return fig
+
+if __name__ == '__main__':
     app.run_server(debug=True, port=8050)

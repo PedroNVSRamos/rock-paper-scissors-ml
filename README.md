@@ -15,16 +15,15 @@ This tool provides a visual representation of relationships among different enti
 ## Features
 
 - **Interactive Web Interface**: Easily input relationships through a user-friendly interface.
-- **Color-coded Nodes**: Entities are color-coded based on their type, ensuring clarity.
-- **Curved Arrows**: Arrows are curved for better visualization and to prevent overlap.
-- **Adaptive Coloring**: Arrow and label colors adjust based on the object of the relationship.
+- **Color-coded relationshops**: Relationships are color-coded based on their type (buff or debuff).
+- **IMages**: Images are assigned to nodes (Heroes and targets) to make them self explanatory. In addition, the relationships also are portrayed with their own image (Artifact icons).
 
 ## Installation
 
 1. **Clone the Repository**:
 
     ```bash
-    git clone https://github.com/PedroNVSRamos/relationships-visualization-rug
+    git clone https://github.com/PedroNVSRamos/rock-paper-scissors-ml
     ```
 
 2. **Navigate to the Project Directory**:
@@ -44,8 +43,9 @@ This tool provides a visual representation of relationships among different enti
 ## Usage
 
 1. Map the participants and the relationships, using the respective files:
- - `participants.csv` maps all participants by their unique ID and their type (e.g., "Tom" is type "Human" and "Puzzle" is type "Toy");
- - `relationships.csv` maps the relationships between the subject type, object type and type of relationshipt (e.g., the relationship "play with" is an "active" type relationship betweetn the subject "Human" and the object "Toy").
+ - `heroes.csv` maps all different heroes, as well as the artifacts they get assigned, and what level the Artifacts unlock and how many tiers each Artifact is quipped with; 
+ - `artifacts.csv` maps the relationships between the subject Heroes and their targets (Classes or Origins) when using the equipped Artifacts. 
+ For rebalancing purposes, just edit both files preserving the existing structure.
 
 2. **Run the Application**:
 

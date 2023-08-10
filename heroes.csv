@@ -1,0 +1,42 @@
+HeroId,ArtifactId,UnlockLevel,EquippedTiers
+
+EmpireHero,Plate Armor,5,1
+EmpireHero,Empire Crown,10,3
+EmpireHero,Vitality Reaper,15,2
+
+
+DesertHero,Sword of Rage,5,1
+DesertHero,Desert Amulet,10,3
+DesertHero,Predatorial Restraint,15,2
+
+UndeadHero,Arcane Aura,5,2
+UndeadHero,Bone Charm,10,1
+UndeadHero,Tempo Curb,15,2
+
+ForestHero,Long Bow,5,2
+ForestHero,Herbal Rune,10,2
+ForestHero,Armor Shatterer,15,1
+
+LightHero,Spirit Staff,5,2
+LightHero,Golden Bracelet,10,2
+LightHero,Deadeye Dampener,15,2
+
+DemonHero,Shadow Blade,5,1
+DemonHero,Spiked Chain,10,3
+DemonHero,Frail Conjurations,15,2
+
+IceHero,Armored Gauntlets,5,2
+IceHero,Moonstones,10,3
+IceHero,Damage Throttle,15,2
+
+ShadowHero,Summoner's Tome,5,2
+ShadowHero,Black Cape,10,2
+ShadowHero,Miracle Muzzler,15,2
+
+AmazonHero,Bestial Trinket,5,1
+AmazonHero,Artillery Tether,10,3
+AmazonHero,Damage Throttle,15,2
+
+OrcHero,Plate Armor,5,1
+OrcHero,Blood Sacrifice,10,3
+OrcHero,Mana Leacher,15,2
