@@ -1,4 +1,5 @@
 from flask import Flask
+import dash
 import pandas as pd
 import networkx as nx
 from dash import Dash, dcc, html, Input, Output
