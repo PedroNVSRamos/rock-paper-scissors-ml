@@ -1,1 +1,1 @@
-web: python relationships.py
+web: python app.py

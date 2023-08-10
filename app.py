@@ -1,7 +1,12 @@
+from flask import Flask
 import pandas as pd
 import networkx as nx
 from dash import Dash, dcc, html, Input, Output
 import plotly.graph_objects as go
+
+server = Flask(__name__)
+
+app = dash.Dash(__name__, server=server)
 
 def modify_description(row):
     equipped_tier = int(row['EquippedTiers'])
@@ -237,5 +242,17 @@ def update_graph(n, layout_type, selected_level, selected_heroes):
 
     return fig
 
+# Dash layout for dashboard
+app.layout = html.Div([
+    # Your Dash components here
+    dcc.Graph(figure=fig)
+])
+
+# Flask route
+@server.route('/')
+def index():
+    return 'Welcome to the Dashboard!'
+
+# Run the app
 if __name__ == '__main__':
-    app.run_server(debug=True)#, port=8050)
+    app.run_server(debug=True)
