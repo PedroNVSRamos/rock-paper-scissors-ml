@@ -1,42 +1,42 @@
 HeroId,ArtifactId,UnlockLevel,EquippedTiers
 
 EmpireHero,Plate Armor,5,1
-EmpireHero,Empire Crown,10,3
-EmpireHero,Vitality Reaper,15,2
-
+EmpireHero,Vitality Reaper,10,2
+EmpireHero,Empire Crown,15,3
 
 DesertHero,Sword of Rage,5,1
-DesertHero,Desert Amulet,10,3
-DesertHero,Predatorial Restraint,15,2
+DesertHero,Predatorial Restraint,10,2
+DesertHero,Desert Amulet,15,3
 
 UndeadHero,Arcane Aura,5,2
-UndeadHero,Bone Charm,10,1
-UndeadHero,Tempo Curb,15,2
+UndeadHero,Tempo Curb,10,2
+UndeadHero,Bone Charm,15,1
 
 ForestHero,Long Bow,5,2
-ForestHero,Herbal Rune,10,2
-ForestHero,Armor Shatterer,15,1
+ForestHero,Armor Shatterer,10,1
+ForestHero,Herbal Rune,15,2
 
 LightHero,Spirit Staff,5,2
-LightHero,Golden Bracelet,10,2
-LightHero,Deadeye Dampener,15,2
+LightHero,Deadeye Dampener,10,2
+LightHero,Golden Bracelet,15,2
 
 DemonHero,Shadow Blade,5,1
-DemonHero,Spiked Chain,10,3
-DemonHero,Frail Conjurations,15,2
+DemonHero,Frail Conjurations,10,2
+DemonHero,Spiked Chain,15,3
 
 IceHero,Armored Gauntlets,5,2
-IceHero,Moonstones,10,3
-IceHero,Damage Throttle,15,2
+IceHero,Damage Throttle,10,2
+IceHero,Moonstones,15,3
 
 ShadowHero,Summoner's Tome,5,2
-ShadowHero,Black Cape,10,2
-ShadowHero,Miracle Muzzler,15,2
+ShadowHero,Miracle Muzzler,10,2
+ShadowHero,Black Cape,15,2
+
 
 AmazonHero,Beastial Trinket,5,1
-AmazonHero,Artillery Tether,10,3
+AmazonHero,Artillery Tether,10,2
 AmazonHero,Damage Throttle,15,2
 
 OrcHero,Plate Armor,5,1
-OrcHero,Blood Sacrifice,10,3
-OrcHero,Mana Leacher,15,2
+OrcHero,Mana Leacher,10,2
+OrcHero,Blood Sacrifice,15,3
