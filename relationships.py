@@ -124,10 +124,6 @@ def update_graph(n, layout_type, selected_level, selected_heroes):
         pos = nx.kamada_kawai_layout(G)
     elif layout_type == "circular":
         pos = nx.circular_layout(G)
-    elif layout_type == "shell":
-        classes = [node for node, data in G.nodes(data=True) if data['type'] == 'class']
-        heroes = [node for node, data in G.nodes(data=True) if data['type'] == 'hero']
-        pos = nx.shell_layout(G, nlist=[classes, heroes])
     elif layout_type == "spring":
         pos = nx.spring_layout(G, k=0.3)
     elif layout_type == "spectral":
