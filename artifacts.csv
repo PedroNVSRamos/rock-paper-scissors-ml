@@ -31,7 +31,7 @@ Black Cape,{1|2|3},Allies,Origin,Shadow,{4|3|2},"Shadow Champions dodge attack n
 Summoner's Tome,{1|2|3},Allies,Class,Summoner,{10|25|50},"Summoners' Defense is increased by {0} while their summoned minion is alive."
 Miracle Muzzler,{1|2|3},Opponents,Class,Priest,{20|25|30},"Enemy Priests healing abilities are decreased by {0}%."
 
-Bestial Trinket,{1|2|3},Allies,Class,Beastmaster,{40|50|60},"Beastmasters have a {0}% chance of blocking enemy attacks from the front or side."
+Beastial Trinket,{1|2|3},Allies,Class,Beastmaster,{40|50|60},"Beastmasters have a {0}% chance of blocking enemy attacks from the front or side."
 Damage Throttle,{1|2|3},Opponents,Class,Assassin,{20|30|40},"Enemy Assassins deal {0}% less Attack Damage."
 Blood Sacrifice,{1|2|3},Allies,Origin,Orc,{15|30|50},"All Orc Champions lose 35% Health, but gain {0}% Critical Hit chance."
 Mana Leacher,{1|2|3},Opponents,Class,Shapeshifter,{25|40|60},"Enemy Shapeshifters' mana regeneration decreases by {0}%."

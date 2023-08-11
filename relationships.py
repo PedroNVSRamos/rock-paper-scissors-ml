@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import networkx as nx
 from dash import Dash, dcc, html, Input, Output
@@ -238,4 +239,4 @@ def update_graph(n, layout_type, selected_level, selected_heroes):
     return fig
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8050)))
